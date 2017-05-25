@@ -1,0 +1,48 @@
+--控件注册：
+DECLARE @MinIndex int
+SELECT @MinIndex=(SELECT MIN(FIndex) FROM t_ThirdPartyComponent WHERE FTypeID=0 AND FTypeDetailID=81)
+SELECT @MinIndex=ISNULL(@MinIndex,-2)
+DELETE FROM t_ThirdPartyComponent where FTypeID=0 and ftypedetailid=81 and FComponentName='Order.Order_PlugIns'
+INSERT INTO t_ThirdPartyComponent(FTypeID,FTypeDetailID,FIndex,FComponentName,FComponentSrv,FDescription)
+                           VALUES(0,81,@MinIndex-1 ,'Order.Order_PlugIns','','订单管理系统')
+
+select * from t_ThirdPartyComponent where FTypeID=0 and ftypedetailid=81 
+
+
+Alter View vw_SaleOdreView  
+as  
+select a.sys_no [流水号],b.Entry_id [分录],a.id [内码],order_no [编号] ,contract_no [合同编号P/O],v.FID [贸易类型],v1.FID [订单类型],v2.FID [币别],exchange_rate [汇率],  
+s.FID [销售方式],v4.FID [结算方式],v5.FID [产品类别],product_use [产品用途],v6.FID [对应项目组],  
+order_date [日期],c.Fnumber [购货单位],d.Fnumber [海外客户],d1.FNumber [终极客户],d2.FNumber [方案公司],  
+s1.FID [回头纸是否确认],s2.FID [生产方式(冒险做货)],s3.FID [外包装印TRULY],s4.FID [是否印有客户LOGO],  
+delivery_place [交货地点],s5.FID [交货编码],de.Fnumber [部门],em.FNumber[业务员],description [说明],100 [比例一],oversea_percentage [最终海外销售比例％],  
+v7.FID [贸易条款],i.Fname [产品名称],i.Fnumber [产品编码],i.Fmodel [产品型号],m.FNumber [单位],tax_rate [税率(%)],qty [数量],  
+unit_Price [单价],deal_price [成交价],cost [成本],fee_rate [费用率(%)],discount_rate [折扣率(%)],aux_tax_price [合同含税单价],  
+aux_tax_price * (1-isnull(discount_rate,0)) [实际含税单价],delivery_date [交货日期],quote_no [报价编号],comment [备注],suggested_delivery_date [建议交货日期],  
+aux_tax_price * qty*isnull(discount_rate,0) [折扣额]         
+from Sale_order a inner join Sale_order_detail b on a.id=b.order_id  
+left join vw_items v on v.interid=a.trade_type and v.what='trade_type'--贸易类型  
+left join vw_items v1 on v1.interid=a.order_type and v1.what='order_type'--订单类型  
+left join vw_items v2 on v2.interid=a.currency and v2.what='currency'--币别  
+--left join vw_items v3 on v3.interid=a.sale_way and v3.what='sale_way'  
+left join vw_items v4 on v4.interid=a.clearing_way and v4.what='clearing_way'--结算方式  
+left join vw_items v5 on v5.interid=a.product_type and v5.what='product_type'--产品类别  
+left join vw_items v6 on v6.interid=a.project_group and v6.what='project_group'--对应项目组  
+left join [192.168.100.209].[GD_ZB_CS].dbo.t_organization c on a.buy_unit=c.fitemid--购货单位  
+left join [192.168.100.209].[GD_ZB_CS].dbo.t_organization d on a.oversea_client=d.fitemid--海外客户  
+left join [192.168.100.209].[GD_ZB_CS].dbo.t_organization d1 on a.final_client=d1.fitemid--终极客户  
+left join [192.168.100.209].[GD_ZB_CS].dbo.t_organization d2 on a.plan_firm=d2.fitemid --方案公司  
+left join vw_items v7 on v7.interid=a.trade_rule  and v7.what='trade_rule' --贸易条款  
+left join [192.168.100.209].[GD_ZB_CS].dbo.t_submessage s on a.sale_way=s.finterid --销售方式  
+left join [192.168.100.209].[GD_ZB_CS].dbo.t_icitemcore i on b.product_id=i.Fitemid --产品  
+left join [192.168.100.209].[GD_ZB_CS].dbo.t_MeasureUnit m on b.unit=m.fitemid--单位  
+left join [192.168.100.209].[GD_ZB_CS].dbo.t_submessage s1 on a.backpaper_confirm=s1.Finterid --回头纸是否确认  
+left join [192.168.100.209].[GD_ZB_CS].dbo.t_submessage s2 on a.produce_way=s2.Finterid --生产方式(冒险做货  
+left join [192.168.100.209].[GD_ZB_CS].dbo.t_submessage s3 on a.print_truly=s3.Finterid --外包装印TRULY  
+left join [192.168.100.209].[GD_ZB_CS].dbo.t_submessage s4 on a.client_logo=s4.Finterid --是否印有客户LOGO  
+left join [192.168.100.209].[GD_ZB_CS].dbo.t_submessage s5 on a.delivery_place=s5.FName --交货地点  
+left join [192.168.100.209].[GD_ZB_CS].dbo.t_department de on a.department_id=de.Fitemid --部门  
+left join [192.168.100.209].[GD_ZB_CS].dbo.t_emp em on a.clerk=em.Fitemid --业务员  
+inner join Sale_apply p on a.sys_no=p.sys_no and p.success=1  
+where cast(a.id as varchar(100))+a.sys_no in (select cast(max(id) as varchar(100))+sys_no from Sale_order group by sys_no)  
+--order by a.id,b.entry_id 

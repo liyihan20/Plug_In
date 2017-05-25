@@ -1,0 +1,41 @@
+--控件注册：
+DECLARE @MinIndex int
+SELECT @MinIndex=(SELECT MIN(FIndex) FROM t_ThirdPartyComponent WHERE FTypeID=0 AND FTypeDetailID=1)
+SELECT @MinIndex=ISNULL(@MinIndex,-2)
+DELETE FROM t_ThirdPartyComponent where FTypeID=0 and ftypedetailid=1 and FComponentName='PStock.Stock_PlugIns'
+INSERT INTO t_ThirdPartyComponent(FTypeID,FTypeDetailID,FIndex,FComponentName,FComponentSrv,FDescription)
+                           VALUES(0,1,@MinIndex-1 ,'PStock.Stock_PlugIns','','')
+
+select * from t_ThirdPartyComponent where FTypeID=0 and ftypedetailid=1 
+
+
+SELECT top 100  b.FEntryid as 分录,p.ftrantype,a.FBillno as 单号,t.fnumber as 临管类型,right('00'+t.fnumber,2) as 贸易类型,a.FNote as 摘要,ts.FID as 采购方式,c.FName as 供应商,
+te.fnumber as 业务员,b.FEveryQty as 每件数量,b.FDOcQty as 件数,FBoxnum as 箱号,FDocNum as 箱型号,
+FDOcHight as 毛重,FDocClear as 净重,FTotalHight as 总毛重,FTotalClear as 总净重,b.FAmount,
+ d.fnumber as 物料编码,d.fname as 物料名称,d.fmodel as 规格型号,b.fnote as 备注,b.forderbillno as 采购订单,p.finterid,
+forderentryid 采购订单分录,b.fprice as 单价,b.fqty as 数量,b.forderqty,tm.fname as 单位,b.fbatchno,
+case when b.fmtono<>'' then 14035 else 14036 end as FID,b.fmtono,b.fcontractbillno as 合同号,b.fcontractentryid as 合同内码,
+b.FContractEntryID as 合同分录,(po.FQty-po.FStockQty) as FMustQty
+ from t_DeliveryReq a inner join t_DeliveryReqEntry b on a.finterid=b.finterid 
+ inner join t_supplier c on a.FSupplyID=c.fitemid 
+ inner join t_icitemcore d on d.fitemid=b.fitemid 
+ left join t_BaseBondedManageType t on a.ftradetype=t.fid 
+ left join t_submessage ts on ts.finterid=a.fpostyle
+left join poorder p on p.fbillno=b.forderbillno 
+ left join t_emp te on te.fitemid=p.fempid 
+inner join poorderentry po on p.finterid=po.finterid and po.fentryid=b.forderentryid
+ left join  t_MeasureUnit tm on tm.fitemid=b.funitid 
+where a.fstatus<>0 and a.Fbillno not in (select FHeadSelfA0142 from icstockbill 
+where ftrantype=1 and (FHeadSelfA0142<>'' or FHeadSelfA0142 is not null)) 
+and (po.FQty-po.FStockQty)<>0 
+order by a.Fbillno 
+
+
+select * from t_DeliveryReq
+select * from t_DeliveryReqEntry
+
+select FBillno,FTradeType,a.FNote,FPOStyle,c.FName FSupplyID,b.FEveryQty,b.FDOcQty,FBoxnum,FDocNum,FDOcHight,FDocClear,FTotalHight,FTotalClear,
+d.fnumber,d.fname,d.fmodel,b.fnote,b.forderbillno,forderentryid,b.fprice,b.fqty,b.forderqty,b.funitid,b.fbatchno,b.fmtono,b.fcontractbillno,fcontractentryid 
+from t_DeliveryReq a inner join t_DeliveryReqEntry b on a.finterid=b.finterid
+inner join t_supplier c on a.FSupplyID=c.fitemid
+inner join t_icitemcore d on d.fitemid=b.fitemid

@@ -1,0 +1,6 @@
+行 13: 控件 MSHFlexGrid1 的类 MSHierarchicalFlexGridLib.MSHFlexGrid 不是一个已加载的控件类。
+行 19: 属性名 _ExtentX 在 MSHFlexGrid1 中是无效的。
+行 20: 属性名 _ExtentY 在 MSHFlexGrid1 中是无效的。
+行 21: 属性名 _Version 在 MSHFlexGrid1 中是无效的。
+行 22: 属性名 _NumberOfBands 在 MSHFlexGrid1 中是无效的。
+行 23: 属性名 _Band(0).Cols 在 MSHFlexGrid1 中是无效的。

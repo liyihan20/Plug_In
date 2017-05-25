@@ -1,0 +1,92 @@
+ StrSql = "SELECT top 100  b.FEntryid as 分录,p.ftrantype,a.FBillno as 单号,t.fnumber as 监管类型,right('00'+t.fnumber,2) as 贸易类型,a.FNote as 摘要,ts.FID as 采购方式,c.FName as 供应商,c.Fnumber as 供应商代码," & _
+ " te.Fnumber as 业务员,b.FEveryQty as 每件数量,b.FDOcQty as 件数,FBoxnum as 箱号,FDocNum as 箱型号,FDOcHight as 毛重,FDocClear as 净重,FTotalHight as 总毛重,FTotalClear as 总净重,b.FAmount," & _
+" d.fnumber as 物料编码,d.fname as 物料名称,d.fmodel as 规格型号,b.fnote as 备注,b.forderbillno as 采购订单,p.finterid,forderentryid 采购订单分录," & _
+" b.fprice as 单价,b.fqty as 数量,b.forderqty,tm.fname as 单位,b.fbatchno,case when b.fmtono<>'' then 'MTO' else 'MTS' end as FID,b.fmtono," & _
+" b.fcontractbillno as 合同号,b.fcontractentryid as 合同内码,b.FContractEntryID as 合同分录 ,(po.FQty-po.FStockQty) as FMustQty " & _
+" from t_DeliveryReq a inner join t_DeliveryReqEntry b on a.finterid=b.finterid " & _
+" inner join t_supplier c on a.FSupplyID=c.fitemid " & _
+" inner join t_icitemcore d on d.fitemid=b.fitemid " & _
+ " left join t_BaseBondedManageType t on a.ftradetype=t.fid " & _
+ " left join t_submessage ts on ts.finterid=a.fpostyle" & _
+ " left join poorder p on p.fbillno=b.forderbillno " & _
+ "inner join poorderentry po on p.finterid=po.finterid and po.fentryid=b.forderentryid " & _
+ " left join t_emp te on te.fitemid=p.fempid " & _
+" left join  t_MeasureUnit tm on tm.fitemid=b.funitid " + StrWhere + " and a.fstatus<>0" & _
+"  and a.Fbillno  not in (select FHeadSelfA0142 from icstockbill where ftrantype=1 and (FHeadSelfA0142<>'' or FHeadSelfA0142 is not null))" & _
+" and (po.FQty-po.FStockQty)<>0  order by a.Fbillno "
+
+        
+
+'=============因无法自动计算所以放弃自动带数量==============
+        '单号
+        m_bill.SetHead ColSNo, MSHFlexGrid1.TextMatrix(S, 1)
+        '采购方式
+        m_bill.SetHead ColSy, MSHFlexGrid1.TextMatrix(S, 15)
+        '业务员
+        m_bill.SetHead ColEmp, MSHFlexGrid1.TextMatrix(S, 17)
+        '贸易类型
+        m_bill.SetHead ColTrda, MSHFlexGrid1.TextMatrix(S, 14)
+        '摘要
+        m_bill.SetHead ColSNote, MSHFlexGrid1.TextMatrix(S, 18)
+        '供应商
+        m_bill.SetHead ColSName, MSHFlexGrid1.TextMatrix(S, 33)
+        '供应商代码
+        m_bill.SetHead ColSNum, MSHFlexGrid1.TextMatrix(S, 33)
+        '监管类型
+        m_bill.SetHead ColTrade, MSHFlexGrid1.TextMatrix(S, 34)
+        '物料编码
+        m_bill.SetGridText R, ColItemID, MSHFlexGrid1.TextMatrix(S, 3)
+        '单位
+        m_bill.SetGridText R, ColUnitID, MSHFlexGrid1.TextMatrix(S, 6)
+        '数量
+        m_bill.SetGridText R, ColQty, MSHFlexGrid1.TextMatrix(S, 7)
+        '备注
+        m_bill.SetGridText R, ColNote, MSHFlexGrid1.TextMatrix(S, 8)
+        '源单单号
+        m_bill.SetGridText R, ColSBillNo, MSHFlexGrid1.TextMatrix(S, 9)
+        '订单单号
+        m_bill.SetGridText R, ColOrder, MSHFlexGrid1.TextMatrix(S, 9)
+        '源单分录号
+        m_bill.SetGridText R, ColSEntryID, MSHFlexGrid1.TextMatrix(S, 10)
+        '订单分录号
+        m_bill.SetGridText R, ColOrEntry, MSHFlexGrid1.TextMatrix(S, 10)
+        '合同单号
+        m_bill.SetGridText R, ColCNo, MSHFlexGrid1.TextMatrix(S, 12)
+        '订单内码
+        m_bill.SetGridText R, ColCID, MSHFlexGrid1.TextMatrix(S, 13)
+         '计划模式
+        m_bill.SetGridText R, ColMode, MSHFlexGrid1.TextMatrix(S, 19)
+         '计划跟踪号
+        m_bill.SetGridText R, ColNo, MSHFlexGrid1.TextMatrix(S, 20)
+        '批次
+        m_bill.SetGridText R, ColBatno, MSHFlexGrid1.TextMatrix(S, 21)
+        '源单类型
+        m_bill.SetGridText R, ColSTranType, MSHFlexGrid1.TextMatrix(S, 22)
+        '源单内码
+        m_bill.SetGridText R, ColSInderID, MSHFlexGrid1.TextMatrix(S, 23)
+        '订单内码
+        m_bill.SetGridText R, ColOrInter, MSHFlexGrid1.TextMatrix(S, 23)
+        '合同分录
+        m_bill.SetGridText R, ColCEntry, MSHFlexGrid1.TextMatrix(S, 24)
+        '每件数量
+        m_bill.SetGridText R, ColEveryQty, MSHFlexGrid1.TextMatrix(S, 25)
+        '件数
+        m_bill.SetGridText R, ColDOcQty, MSHFlexGrid1.TextMatrix(S, 26)
+        '箱号
+        m_bill.SetGridText R, ColBoxnum, MSHFlexGrid1.TextMatrix(S, 27)
+        '箱型号
+        m_bill.SetGridText R, ColDocNum, MSHFlexGrid1.TextMatrix(S, 28)
+        '毛重
+        m_bill.SetGridText R, ColDOcHight, MSHFlexGrid1.TextMatrix(S, 29)
+        '净重
+        m_bill.SetGridText R, ColDocClear, MSHFlexGrid1.TextMatrix(S, 30)
+        '总毛重
+        m_bill.SetGridText R, ColTotalHight, MSHFlexGrid1.TextMatrix(S, 31)
+        '总净重
+        m_bill.SetGridText R, ColTotalClear, MSHFlexGrid1.TextMatrix(S, 32)
+        '应收数量
+        m_bill.SetGridText R, Colmustqty, MSHFlexGrid1.TextMatrix(S, 35)
+
+        VarTmp = Val(m_bill.GetGridText(R, ColPrice)) * Val(m_bill.GetGridText(R, ColQty))
+        '金额
+        m_bill.SetGridText R, ColAMount, VarTmp

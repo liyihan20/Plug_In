@@ -1,0 +1,23 @@
+DECLARE @MinIndex int
+SELECT @MinIndex=(SELECT MIN(FIndex) FROM t_ThirdPartyComponent WHERE FTypeID=0 AND FTypeDetailID=28)
+SELECT @MinIndex=ISNULL(@MinIndex,-2)
+DELETE FROM t_ThirdPartyComponent where FTypeID=0 and ftypedetailid=28 and FComponentName='OMP.OMP_PlugIns'
+INSERT INTO t_ThirdPartyComponent(FTypeID,FTypeDetailID,FIndex,FComponentName,FComponentSrv,FDescription)
+                           VALUES(0,28,@MinIndex-1 ,'OMP.OMP_PlugIns','','委外加工管理平台')
+
+DECLARE @MinIndex int
+SELECT @MinIndex=(SELECT MIN(FIndex) FROM t_ThirdPartyComponent WHERE FTypeID=0 AND FTypeDetailID=5)
+SELECT @MinIndex=ISNULL(@MinIndex,-2)
+DELETE FROM t_ThirdPartyComponent where FTypeID=0 and ftypedetailid=5 and FComponentName='OMP.OMP_PlugIns'
+INSERT INTO t_ThirdPartyComponent(FTypeID,FTypeDetailID,FIndex,FComponentName,FComponentSrv,FDescription)
+                           VALUES(0,5,@MinIndex-1 ,'OMP.OMP_PlugIns','','委外加工管理平台')
+
+DECLARE @MinIndex int
+SELECT @MinIndex=(SELECT MIN(FIndex) FROM t_ThirdPartyComponent WHERE FTypeID=0 AND FTypeDetailID=6)
+SELECT @MinIndex=ISNULL(@MinIndex,-2)
+DELETE FROM t_ThirdPartyComponent where FTypeID=0 and ftypedetailid=6 and FComponentName='OMP.OMP_PlugIns'
+INSERT INTO t_ThirdPartyComponent(FTypeID,FTypeDetailID,FIndex,FComponentName,FComponentSrv,FDescription)
+                           VALUES(0,6,@MinIndex-1 ,'OMP.OMP_PlugIns','','委外加工管理平台')
+
+select * from t_ThirdPartyComponent where FTypeID=0 and ftypedetailid=28 
+

@@ -1,0 +1,36 @@
+
+        For t = 1 To MSHFlexGrid1.Cols
+            If fIndex(t) > 0 Then
+                If HeadOrEntry(t) = 1 Then
+                    m_bill.SetGridText R, fIndex(t), MSHFlexGrid1.TextMatrix(S, t)
+                    'MsgBox m_bill.EntryCtl(fIndex(t)).FieldName
+                Else
+                    If UCase(m_bill.HeadCtl(fIndex(t)).FieldName) = "FORDERINTERID" Then
+                        '由于表头也有FOrderInterID所以须单独赋值
+                        m_bill.SetGridText R, ColOrInter, MSHFlexGrid1.TextMatrix(S, t)
+                        'MsgBox m_bill.EntryCtl(fIndex(t)).FieldName
+                    Else
+                        m_bill.SetHead fIndex(t), MSHFlexGrid1.TextMatrix(S, t)
+                        'MsgBox m_bill.HeadCtl(fIndex(t)).FieldName
+                    End If
+                End If
+            End If
+        Next
+
+
+    For j = 1 To tCount
+        If j <= headCount Then
+            If UCase(m_bill.HeadCtl(j).FieldName) = tName Then
+                fIndex(i) = j
+                HeadOrEntry(i) = 0
+                Exit For
+            End If
+        End If
+        If j <= entryCount Then
+            If UCase(m_bill.EntryCtl(j).FieldName) = tName Then
+                fIndex(i) = j
+                HeadOrEntry(i) = 1
+                Exit For
+            End If
+        End If
+    Next
