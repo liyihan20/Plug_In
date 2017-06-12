@@ -324,6 +324,11 @@ If MSHFlexGrid1.TextMatrix(MSHFlexGrid1.Row, 0) = "Y" Then
     MSHFlexGrid1.TextMatrix(MSHFlexGrid1.Row, 0) = ""
 Else
     MSHFlexGrid1.TextMatrix(MSHFlexGrid1.Row, 0) = "Y"
+    For i = 1 To MSHFlexGrid1.Rows - 1
+        If MSHFlexGrid1.TextMatrix(i, 1) = MSHFlexGrid1.TextMatrix(MSHFlexGrid1.Row, 1) Then
+            MSHFlexGrid1.TextMatrix(i, 0) = "Y"
+        End If
+    Next i
 End If
 End Sub
 
