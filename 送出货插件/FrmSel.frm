@@ -255,6 +255,13 @@ End If
 
 DBServer.CommandTimeout = 120
 rs.Open "Exec " & StoreProcName & " @FBillNo='" + TxtBillNo.Text + "'", DBServer, adOpenKeyset
+
+If rs.RecordCount < 1 Then
+    MsgBox "您的查询结果为空，请检查申请单号输入是否正确。", vbOKOnly, "金蝶提示"
+    rs.Close
+    Exit Sub
+End If
+
 If rs.RecordCount > 0 Then
     MSHFlexGrid1.Rows = rs.RecordCount + 1
     fCount = rs.Fields.Count
@@ -313,9 +320,9 @@ If UBound(headIndex) <= 0 Then
 End If
 
 
-If rs.RecordCount < 1 Then
-    MsgBox "您的查询结果为空，请检查申请单号输入是否正确。", vbOKOnly, "金蝶提示"
-End If
+'If rs.RecordCount < 1 Then
+'    MsgBox "您的查询结果为空，请检查申请单号输入是否正确。", vbOKOnly, "金蝶提示"
+'End If
 rs.Close
 End Sub
 

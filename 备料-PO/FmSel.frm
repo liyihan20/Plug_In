@@ -9,7 +9,7 @@ Begin VB.Form FmSel
    LinkTopic       =   "Form1"
    ScaleHeight     =   5505
    ScaleWidth      =   10830
-   StartUpPosition =   3  '窗口缺省
+   StartUpPosition =   2  '屏幕中心
    Begin VB.CommandButton insertBt 
       Caption         =   "批量插入"
       Height          =   495
@@ -104,7 +104,7 @@ Private headIndex() As Integer
 Private entryIndex() As Integer
 
 Private Sub ckBt_Click()
-If (BillNoTxt.Text = "" Or modelTxt.Text = "" Or orderTxt.Text = "") Then
+If (BillNoTxt.Text = "" And modelTxt.Text = "" And orderTxt.Text = "") Then
     MsgBox "检索条件不能为空!需至少填写一个", vbOKOnly, "信息中心提示提示"
     Exit Sub
 End If
@@ -196,9 +196,8 @@ If TxtBillNo.Text <> "" Then
     StrWhere = StrWhere + modelTxt.Text + "%' and [订料员] like '%"
     StrWhere = StrWhere + orderTxt.Text + "%' and [事业部] = '" + account + "'"
 End If
-    
+
 StrSql = "select * from" + myServer + "dbo.vw_BLPO_plugin " + StrWhere
-    
 
 Rs.Open StrSql, DBServer, adOpenKeyset
 If Rs.RecordCount > 0 Then
@@ -238,7 +237,7 @@ For i = 1 To MSHFlexGrid1.Rows - 1
     If Trim(MSHFlexGrid1.TextMatrix(i, 0)) = "Y" Then
         billNo = MSHFlexGrid1.TextMatrix(i, 8)
         entryId = MSHFlexGrid1.TextMatrix(i, 9)
-        existSql = "select 1 from POOrder where FSourceBillNo = '" + billNo + "' and FSourceEntryID = " + entryId
+        existSql = "select 1 from POOrderEntry where FSourceBillNo = '" + billNo + "' and FSourceEntryID = " + entryId
         existRs.Open existSql, DBServer, adOpenKeyset
         If (existRs.RecordCount > 0) Then
             If MsgBox("流水号[" + billNo + "]分录号[" + entryId + "]在K3已经存在，是否继续？", vbYesNo, "信息中心提示") = vbNo Then
@@ -248,7 +247,7 @@ For i = 1 To MSHFlexGrid1.Rows - 1
         End If
         existRs.Close
     End If
-End If
+Next i
 
 '表头
 For S = 1 To MSHFlexGrid1.Rows - 1
