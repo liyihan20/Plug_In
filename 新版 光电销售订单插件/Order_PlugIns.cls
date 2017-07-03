@@ -45,7 +45,7 @@ Private Sub m_BillTransfer_BillInitialize()
  
 '*************** 开始设置菜单 ***************
 
-m_BillTransfer.AddUserMenuItem "订单管理系统", "扩展"
+m_BillTransfer.AddUserMenuItem "CRM_订单导入", "扩展"
 DBServer.ConnectionString = m_BillTransfer.Cnnstring
 DBServer.Open
 '*************** 结束设置菜单 ***************
@@ -67,7 +67,7 @@ Dim connStr As String
 connStr = m_BillTransfer.Cnnstring
 
     Select Case Caption
-    Case "订单管理系统"
+    Case "CRM_订单导入"
         '此处添加处理 物料清单 菜单对象的 Click 事件
          Set FrmSel.m_bill = m_BillTransfer
         'For R = 1 To UBound(m_BillTransfer.HeadCtl)
@@ -79,8 +79,13 @@ connStr = m_BillTransfer.Cnnstring
        
        If InStr(connStr, "AIS20070122151122") > 0 Then
             FrmSel.myServer = "[192.168.100.205].[SaleOrder_platform_semi]."
+            account = "semi"
         ElseIf InStr(connStr, "AIS20120508141651") > 0 Or InStr(connStr, "GDZB_CS_JLH20130828") > 0 Then
             FrmSel.myServer = "[192.168.100.205].[SaleOrder_platform]."
+            account = "opto"
+        ElseIf InStr(connStr, "AIS20060821075019") > 0 Then  '电子
+            FrmSel.myServer = "[192.168.100.205].[SaleOrder_platform_ele]."
+            account = "ele"
         Else
             MsgBox "没有合适的数据库连接", vbOKOnly, "信息中心提示"
             Exit Sub

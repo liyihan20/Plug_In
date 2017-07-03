@@ -115,16 +115,19 @@ End If
 existRs.Close
 
 '判断是否已经在K3存在订单编号
-billNo = MSHFlexGrid1.TextMatrix(1, 2)
-existSql = "select FInterID from SEOrder where FBillNo='" + billNo + "'"
-existRs.Open existSql, DBServer, adOpenKeyset
-If (existRs.RecordCount > 0) Then
-    If MsgBox("该订单编号在K3已经存在，是否继续？", vbYesNo, "信息中心提示") = vbNo Then
-        existRs.Close
-        Exit Sub
+If account <> "ele" Then  '电子没有订单编号
+    billNo = MSHFlexGrid1.TextMatrix(1, 2)
+    existSql = "select FInterID from SEOrder where FBillNo='" + billNo + "'"
+    existRs.Open existSql, DBServer, adOpenKeyset
+    If (existRs.RecordCount > 0) Then
+        If MsgBox("该订单编号在K3已经存在，是否继续？", vbYesNo, "信息中心提示") = vbNo Then
+            existRs.Close
+            Exit Sub
+        End If
     End If
+    existRs.Close
 End If
-existRs.Close
+
 Me.Hide
 
 '表头
@@ -181,12 +184,19 @@ Dim T As Integer
 Dim fieldIndex As Integer
 fieldIndex = 0
 On Error Resume Next
-If TxtBillNo.Text <> "" Then
-    StrWhere = "where 流水号  = '" + TxtBillNo.Text + "' or 订单编号 = '" + TxtBillNo.Text + "'"
+If account <> "ele" Then
+    If TxtBillNo.Text <> "" Then
+        StrWhere = "where 流水号  = '" + TxtBillNo.Text + "' or 订单编号 = '" + TxtBillNo.Text + "'"
+    End If
+    StrSql = "select * from" + myServer + "dbo.vw_SaleOrder_plugin  " + StrWhere + " order by 源单行号 "
+Else
+    '电子的字段不一样
+    If TxtBillNo.Text <> "" Then
+        StrWhere = "where 源单单号  = '" + TxtBillNo.Text + "'"
+    End If
+    StrSql = "select * from" + myServer + "dbo.vw_SaleOrder_plugin  " + StrWhere + " order by 源单分录 "
+
 End If
-    
-StrSql = "select * from" + myServer + "dbo.vw_SaleOrder_plugin  " + StrWhere + " order by 源单行号 "
-    
 
 Rs.Open StrSql, DBServer, adOpenKeyset
 If Rs.RecordCount > 0 Then
@@ -228,6 +238,11 @@ Dim j As Integer
 Dim sql As String
 
 sql = "select field_en_name,head_or_entry from " + myServer + "dbo.Sale_K3_table_description where bill_type='SO'"
+
+If account = "ele" Then '电子需要按照sort_no排序
+    sql = sql + " order by sort_no"
+End If
+
 Rs.Open sql, DBServer, adOpenKeyset
 
 
@@ -271,6 +286,10 @@ Dim Rs As New ADODB.Recordset
 Dim sql As String
 Dim i As Integer
 sql = "select field_cn_name,field_width from " + myServer + "dbo.Sale_K3_table_description where bill_type='SO'"
+If account = "ele" Then '电子需要按照sort_no排序
+    sql = sql + " order by sort_no"
+End If
+
 Rs.Open sql, DBServer, adOpenKeyset
 fieldsNum = Rs.RecordCount
 
